@@ -13,6 +13,7 @@ int getFileSize(FILE* inFile)
 
 wav_data readWaveData(char *fileName)
 {
+	std::cout << "readWaveData(" << fileName << ")" << std::endl;
 	wav_data wavData;
 	memset(&wavData, 0, sizeof(wavData));
 
@@ -34,7 +35,7 @@ wav_data readWaveData(char *fileName)
 		return wavData;
 	}
 	size_t bytesRead = fread(wavData.wavHeader, 1, headerSize, wavFile);
-	std::cout << "Header Read " << bytesRead << " bytes." << std::endl;
+	std::cout << "	Header Read " << bytesRead << " bytes." << std::endl;
 	if (bytesRead > 0)
 	{
 		//Read the data
@@ -44,31 +45,33 @@ wav_data readWaveData(char *fileName)
 		wavData.wavBuffer->length = wavData.wavHeader->Subchunk2Size;
 		wavData.wavBuffer->buffer = new uint8_t[wavData.wavBuffer->length];
 		bytesRead = fread(wavData.wavBuffer->buffer, sizeof wavData.wavBuffer->buffer[0], wavData.wavBuffer->length, wavFile);
-		std::cout << "Read " << bytesRead << " bytes." << std::endl;
+		std::cout << "	Read " << bytesRead << " bytes." << std::endl;
 
 //		static const uint16_t BUFFER_SIZE = 4096;
 //		int8_t* buffer = new int8_t[BUFFER_SIZE];
 		filelength = getFileSize(wavFile);
 
-		std::cout << "File is                    :" << filelength << " bytes." << std::endl;
-		std::cout << "RIFF header                :" << wavData.wavHeader->RIFF[0] << wavData.wavHeader->RIFF[1] << wavData.wavHeader->RIFF[2] << wavData.wavHeader->RIFF[3] << std::endl;
-		std::cout << "WAVE header                :" << wavData.wavHeader->WAVE[0] << wavData.wavHeader->WAVE[1] << wavData.wavHeader->WAVE[2] << wavData.wavHeader->WAVE[3] << std::endl;
-		std::cout << "FMT                        :" << wavData.wavHeader->fmt[0] << wavData.wavHeader->fmt[1] << wavData.wavHeader->fmt[2] << wavData.wavHeader->fmt[3] << std::endl;
-		std::cout << "Data size                  :" << wavData.wavHeader->ChunkSize << std::endl;
+		std::cout << "	File is                    :" << filelength << " bytes." << std::endl;
+		std::cout << "	RIFF header                :" << wavData.wavHeader->RIFF[0] << wavData.wavHeader->RIFF[1] << wavData.wavHeader->RIFF[2] << wavData.wavHeader->RIFF[3] << std::endl;
+		std::cout << "	WAVE header                :" << wavData.wavHeader->WAVE[0] << wavData.wavHeader->WAVE[1] << wavData.wavHeader->WAVE[2] << wavData.wavHeader->WAVE[3] << std::endl;
+		std::cout << "	FMT                        :" << wavData.wavHeader->fmt[0] << wavData.wavHeader->fmt[1] << wavData.wavHeader->fmt[2] << wavData.wavHeader->fmt[3] << std::endl;
+		std::cout << "	Data size                  :" << wavData.wavHeader->ChunkSize << std::endl;
 
 		// Display the sampling Rate from the header
-		std::cout << "Subchunk1Size              :" << wavData.wavHeader->Subchunk1Size << std::endl;
-		std::cout << "Sampling Rate              :" << wavData.wavHeader->SamplesPerSec << std::endl;
-		std::cout << "Number of bits used        :" << wavData.wavHeader->bitsPerSample << std::endl;
-		std::cout << "Number of channels         :" << wavData.wavHeader->NumOfChan << std::endl;
-		std::cout << "Number of bytes per second :" << wavData.wavHeader->bytesPerSec << std::endl;
-		std::cout << "Data length                :" << wavData.wavHeader->Subchunk2Size << std::endl;
-		std::cout << "Audio Format               :" << wavData.wavHeader->AudioFormat << std::endl;
+		std::cout << "	Subchunk1Size              :" << wavData.wavHeader->Subchunk1Size << std::endl;
+		std::cout << "	Sampling Rate              :" << wavData.wavHeader->SamplesPerSec << std::endl;
+		std::cout << "	Number of bits used        :" << wavData.wavHeader->bitsPerSample << std::endl;
+		std::cout << "	Number of channels         :" << wavData.wavHeader->NumOfChan << std::endl;
+		std::cout << "	Number of bytes per second :" << wavData.wavHeader->bytesPerSec << std::endl;
+		std::cout << "	Data length                :" << wavData.wavHeader->Subchunk2Size << std::endl;
+		std::cout << "	Audio Format               :" << wavData.wavHeader->AudioFormat << std::endl;
 		// Audio format 1=PCM,6=mulaw,7=alaw, 257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM
 
-		std::cout << "Block align                :" << wavData.wavHeader->blockAlign << std::endl;
-		std::cout << "Data string                :" << wavData.wavHeader->Subchunk2ID[0] << wavData.wavHeader->Subchunk2ID[1] << wavData.wavHeader->Subchunk2ID[2] << wavData.wavHeader->Subchunk2ID[3] << std::endl;
+		std::cout << "	Block align                :" << wavData.wavHeader->blockAlign << std::endl;
+		std::cout << "	Data string                :" << wavData.wavHeader->Subchunk2ID[0] << wavData.wavHeader->Subchunk2ID[1] << wavData.wavHeader->Subchunk2ID[2] << wavData.wavHeader->Subchunk2ID[3] << std::endl;
+
 	}
+	std::cout << std::endl;
 	fclose(wavFile);
 	return wavData;
 }
@@ -83,10 +86,31 @@ wav_data setWaveHeader(wav_data wavData)
 
 void writeWaveData(char *outFileName, wav_data outWavData)
 {
-	std::cout << "write Wave File : " << outFileName << std::endl;
+	std::cout << "writeWaveData(" << outFileName << ")" << std::endl;
 	FILE* wavFile = fopen(outFileName, "wb");
 	fwrite(outWavData.wavHeader, 1, 44, wavFile);
 	fwrite(outWavData.wavBuffer->buffer, 1, outWavData.wavBuffer->length, wavFile);
+
+	std::cout << "	RIFF header                :" << outWavData.wavHeader->RIFF[0] << outWavData.wavHeader->RIFF[1] << outWavData.wavHeader->RIFF[2] << outWavData.wavHeader->RIFF[3] << std::endl;
+	std::cout << "	WAVE header                :" << outWavData.wavHeader->WAVE[0] << outWavData.wavHeader->WAVE[1] << outWavData.wavHeader->WAVE[2] << outWavData.wavHeader->WAVE[3] << std::endl;
+	std::cout << "	FMT                        :" << outWavData.wavHeader->fmt[0] << outWavData.wavHeader->fmt[1] << outWavData.wavHeader->fmt[2] << outWavData.wavHeader->fmt[3] << std::endl;
+	std::cout << "	Data size                  :" << outWavData.wavHeader->ChunkSize << std::endl;
+
+	// Display the sampling Rate from the header
+	std::cout << "	Subchunk1Size              :" << outWavData.wavHeader->Subchunk1Size << std::endl;
+	std::cout << "	Sampling Rate              :" << outWavData.wavHeader->SamplesPerSec << std::endl;
+	std::cout << "	Number of bits used        :" << outWavData.wavHeader->bitsPerSample << std::endl;
+	std::cout << "	Number of channels         :" << outWavData.wavHeader->NumOfChan << std::endl;
+	std::cout << "	Number of bytes per second :" << outWavData.wavHeader->bytesPerSec << std::endl;
+	std::cout << "	Data length                :" << outWavData.wavHeader->Subchunk2Size << std::endl;
+	std::cout << "	Audio Format               :" << outWavData.wavHeader->AudioFormat << std::endl;
+	// Audio format 1=PCM,6=mulaw,7=alaw, 257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM
+
+	std::cout << "	Block align                :" << outWavData.wavHeader->blockAlign << std::endl;
+	std::cout << "	Data string                :" << outWavData.wavHeader->Subchunk2ID[0] << outWavData.wavHeader->Subchunk2ID[1] << outWavData.wavHeader->Subchunk2ID[2] << outWavData.wavHeader->Subchunk2ID[3] << std::endl;
+
+	std::cout << std::endl;
+
 	fclose(wavFile);
 }
 
@@ -162,8 +186,6 @@ void copyOutSampleToOutWavBuf(sample_16b_buf outSampleData, wav_data outWavData)
 		{
 			outWavData.wavBuffer->buffer[i * 2 + j] = ((uint16_t)(outSampleData.buffer[i]) >> (j * 8)) & 0xFF;
 		}
-		if (i == 0 || i == 1)
-			printf("%04x : %02x %02x\n", (uint16_t)(outSampleData.buffer[i]), outWavData.wavBuffer->buffer[i * 2], outWavData.wavBuffer->buffer[i * 2 + 1]);
 	}
 }
 
@@ -195,34 +217,10 @@ wav_data makeOutWavData(wav_data inWavData, sample_16b_buf OutSampleData)
 	outWavData.wavBuffer = new wav_buf;
 
 	copyWavHeader(inWavData, outWavData);
-	std::cout << "makeOutWavData : " << outWavData.wavHeader->Subchunk2ID[0] << std::endl;
-	std::cout << "OutSampleData.length : " << OutSampleData.length << std::endl;
-	std::cout << "bits per samples : " << inWavData.wavHeader->bitsPerSample << std::endl;
-
 	outWavData.wavBuffer->length = OutSampleData.length * (inWavData.wavHeader->bitsPerSample / 8);
-	std::cout << "OutSampleData.length : " << outWavData.wavBuffer->length << std::endl;
 
 	outWavData.wavBuffer->buffer = new uint8_t[outWavData.wavBuffer->length];
 	copyOutSampleToOutWavBuf(OutSampleData, outWavData);
 	setWaveHeader(outWavData);
-
-	std::cout << "RIFF header                :" << outWavData.wavHeader->RIFF[0] << outWavData.wavHeader->RIFF[1] << outWavData.wavHeader->RIFF[2] << outWavData.wavHeader->RIFF[3] << std::endl;
-	std::cout << "WAVE header                :" << outWavData.wavHeader->WAVE[0] << outWavData.wavHeader->WAVE[1] << outWavData.wavHeader->WAVE[2] << outWavData.wavHeader->WAVE[3] << std::endl;
-	std::cout << "FMT                        :" << outWavData.wavHeader->fmt[0] << outWavData.wavHeader->fmt[1] << outWavData.wavHeader->fmt[2] << outWavData.wavHeader->fmt[3] << std::endl;
-	std::cout << "Data size                  :" << outWavData.wavHeader->ChunkSize << std::endl;
-
-	// Display the sampling Rate from the header
-	std::cout << "Subchunk1Size              :" << outWavData.wavHeader->Subchunk1Size << std::endl;
-	std::cout << "Sampling Rate              :" << outWavData.wavHeader->SamplesPerSec << std::endl;
-	std::cout << "Number of bits used        :" << outWavData.wavHeader->bitsPerSample << std::endl;
-	std::cout << "Number of channels         :" << outWavData.wavHeader->NumOfChan << std::endl;
-	std::cout << "Number of bytes per second :" << outWavData.wavHeader->bytesPerSec << std::endl;
-	std::cout << "Data length                :" << outWavData.wavHeader->Subchunk2Size << std::endl;
-	std::cout << "Audio Format               :" << outWavData.wavHeader->AudioFormat << std::endl;
-	// Audio format 1=PCM,6=mulaw,7=alaw, 257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM
-
-	std::cout << "Block align                :" << outWavData.wavHeader->blockAlign << std::endl;
-	std::cout << "Data string                :" << outWavData.wavHeader->Subchunk2ID[0] << outWavData.wavHeader->Subchunk2ID[1] << outWavData.wavHeader->Subchunk2ID[2] << outWavData.wavHeader->Subchunk2ID[3] << std::endl;
-
 	return outWavData;
 }

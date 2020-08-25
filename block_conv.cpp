@@ -3,13 +3,21 @@
 #include "_kiss_fft_guts.h"
 #include "LPF_hamming_512.h"
 
-void do_kiss_fft(kiss_fft_cpx* inBuf, kiss_fft_cpx* outBuf, int nfft, int inverse)
+void do_kiss_ft(kiss_fft_cpx* inBuf, kiss_fft_cpx* outBuf, int nfft, int inverse, int flag)
 {
 	// copy filter data to buffer
-	kiss_fft_cfg st = kiss_fft_alloc(nfft, inverse, 0, 0);
-	kiss_fft(st, inBuf, outBuf);
-	free(st);
-	kiss_fft_cleanup();
+	if (flag == 0)
+	{
+		kiss_fft_cfg st = kiss_fft_alloc(nfft, inverse, 0, 0);
+		kiss_fft(st, inBuf, outBuf);
+		free(st);
+		kiss_fft_cleanup();
+	}
+	else
+	{
+		kiss_dft_state st(nfft, inverse);
+		st.run_dft(inBuf, outBuf);
+	}
 }
 
 void memset_cpx(kiss_fft_cpx* in, float v, uint32_t length)
@@ -19,7 +27,7 @@ void memset_cpx(kiss_fft_cpx* in, float v, uint32_t length)
 		in[i].r = in[i].i = v;
 }
 
-sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData)
+sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData, int flag)
 {
 	kiss_fft_cpx * wavBuf, *fltBuf;
 	kiss_fft_cpx * wavBufOut, *fltBufOut, *mulBufOut, *bufOut;
@@ -30,8 +38,12 @@ sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData)
 	const int L = 513; // Block Length
 	const int M = 512; // impulse response Length
 
-	int nbytes = N * sizeof(kiss_fft_cpx);
+	kiss_fft_cfg st = kiss_fft_alloc(N, 0, 0, 0);
+	kiss_fft_cfg sti = kiss_fft_alloc(N, 1, 0, 0);
+	kiss_dft_state dt(N, 0);
+	kiss_dft_state dti(N, 1);
 
+	int nbytes = N * sizeof(kiss_fft_cpx);
 	sample_16b_buf outSampleData = makeOutSampleData(inSampleData, L, 0);
 
 	// FFT of Low-pass Filter
@@ -43,7 +55,8 @@ sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData)
 	for (i = 0; i < M; i++)
 		fltBuf[i].r = LPF_coeff[i];
 
-	do_kiss_fft(fltBuf, fltBufOut, N, 0);
+	if (flag == 0) kiss_fft(st, fltBuf, fltBufOut);
+	else dt.run_dft(fltBuf, fltBufOut);
 
 	wavBuf = (kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
 	wavBufOut = (kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
@@ -65,13 +78,15 @@ sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData)
 			if (bufIdx < 0 || bufIdx >= inSampleData.length) continue;
 			wavBuf[j].r = (float)(inSampleData.buffer[bufIdx]);
 		}
-		do_kiss_fft(wavBuf, wavBufOut, N, 0);
+
+		if (flag == 0) kiss_fft(st, wavBuf, wavBufOut);
+		else dt.run_dft(wavBuf, wavBufOut);
 
 		for (j = 0; j < N; j++)
 			C_MUL(mulBufOut[j], wavBufOut[j], fltBufOut[j]);
 
-		do_kiss_fft(mulBufOut, bufOut, N, 1);
-//		do_kiss_fft(wavBufOut, bufOut, N, 1);
+		if (flag == 0) kiss_fft(sti, mulBufOut, bufOut);
+		else dti.run_dft(mulBufOut, bufOut);
 
 		for (j = 0; j < L; j++)
 		{
@@ -84,10 +99,12 @@ sample_16b_buf run_overlap_save_fft(sample_16b_buf inSampleData)
 	free(mulBufOut);
 	free(bufOut);
 
+	free(st);
+	free(sti);
 	return outSampleData;
 }
 
-sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData)
+sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData, int flag)
 {
 	kiss_fft_cpx * wavBuf, *fltBuf;
 	kiss_fft_cpx * wavBufOut, *fltBufOut, *mulBufOut, *bufOut;
@@ -97,6 +114,11 @@ sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData)
 	const int N = 1024; // number of fft
 	const int L = 513; // Block Length
 	const int M = 512; // impulse response Length
+
+	kiss_fft_cfg st = kiss_fft_alloc(N, 0, 0, 0);
+	kiss_fft_cfg sti = kiss_fft_alloc(N, 1, 0, 0);
+	kiss_dft_state dt(N, 0);
+	kiss_dft_state dti(N, 1);
 
 	int nbytes = N * sizeof(kiss_fft_cpx);
 
@@ -111,7 +133,8 @@ sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData)
 	for (i = 0; i < M; i++)
 		fltBuf[i].r = LPF_coeff[i];
 
-	do_kiss_fft(fltBuf, fltBufOut, N, 0);
+	if (flag == 0) kiss_fft(st, fltBuf, fltBufOut);
+	else dt.run_dft(fltBuf, fltBufOut);
 
 	wavBuf = (kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
 	wavBufOut = (kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
@@ -133,12 +156,14 @@ sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData)
 			if (bufIdx < 0 || bufIdx >= inSampleData.length) continue;
 			wavBuf[j].r = (float)(inSampleData.buffer[bufIdx]);
 		}
-		do_kiss_fft(wavBuf, wavBufOut, N, 0);
+		if (flag == 0) kiss_fft(st, wavBuf, wavBufOut);
+		else dt.run_dft(wavBuf, wavBufOut);
 
 		for (j = 0; j < N; j++)
 			C_MUL(mulBufOut[j], wavBufOut[j], fltBufOut[j]);
 
-		do_kiss_fft(mulBufOut, bufOut, N, 1);
+		if (flag == 0) kiss_fft(sti, mulBufOut, bufOut);
+		else dti.run_dft(mulBufOut, bufOut);
 
 		for (j = 0; j < N; j++)
 		{
@@ -151,14 +176,18 @@ sample_16b_buf run_overlap_add_fft(sample_16b_buf inSampleData)
 	free(mulBufOut);
 	free(bufOut);
 
+	free(st);
+	free(sti);
+
 	return outSampleData;
 }
 
-wav_data do_overlap_save(wav_data inWavData)
+wav_data do_overlap_save(wav_data inWavData, int flag)
 {
+	std::cout << "do_overlap_save ( flag : " << flag << " )" << std::endl;
 	// convert wav_data to sample_data
 	sample_16b_buf inSampleData = getSampleData(inWavData);
-	sample_16b_buf OutSampleData = run_overlap_save_fft(inSampleData);
+	sample_16b_buf OutSampleData = run_overlap_save_fft(inSampleData, flag);
 
 	wav_data outWavData = makeOutWavData(inWavData, OutSampleData);
 
@@ -167,11 +196,12 @@ wav_data do_overlap_save(wav_data inWavData)
 	return outWavData;
 }
 
-wav_data do_overlap_add(wav_data inWavData)
+wav_data do_overlap_add(wav_data inWavData, int flag)
 {
+	std::cout << "do_overlap_add ( flag : " << flag << " )" << std::endl;
 	// convert wav_data to sample_data
 	sample_16b_buf inSampleData = getSampleData(inWavData);
-	sample_16b_buf OutSampleData = run_overlap_add_fft(inSampleData);
+	sample_16b_buf OutSampleData = run_overlap_add_fft(inSampleData, flag);
 
 	wav_data outWavData = makeOutWavData(inWavData, OutSampleData);
 
@@ -179,3 +209,4 @@ wav_data do_overlap_add(wav_data inWavData)
 	freeSampleData(OutSampleData);
 	return outWavData;
 }
+

@@ -20,15 +20,25 @@ int main(int argc, char ** argv)
 	char fileName[] = "sa1.wav";
 	wav_data wavData = readWaveData(fileName);
 
-	char outFileName1[] = "sa1_overlap_save.wav";
-	wav_data outWavData1 = do_overlap_save(wavData);
-	writeWaveData(outFileName1, outWavData1);
-	freeWaveData(outWavData1);
+	char outFileNameSaveFFT[] = "sa1_overlap_save_fft.wav";
+	wav_data outWavData = do_overlap_save(wavData, 0);
+	writeWaveData(outFileNameSaveFFT, outWavData);
+	freeWaveData(outWavData);
 
-	char outFileName2[] = "sa1_overlap_add.wav";
-	wav_data outWavData2 = do_overlap_add(wavData);
-	writeWaveData(outFileName2, outWavData2);
-	freeWaveData(outWavData2);
+	char outFileNameSaveDFT[] = "sa1_overlap_save_dft.wav";
+	outWavData = do_overlap_save(wavData, 1);
+	writeWaveData(outFileNameSaveDFT, outWavData);
+	freeWaveData(outWavData);
+
+	char outFileNameAddFFT[] = "sa1_overlap_add_fft.wav";
+	outWavData = do_overlap_add(wavData, 0);
+	writeWaveData(outFileNameAddFFT, outWavData);
+	freeWaveData(outWavData);
+
+	char outFileNameAddDFT[] = "sa1_overlap_add_dft.wav";
+	outWavData = do_overlap_add(wavData, 1);
+	writeWaveData(outFileNameAddDFT, outWavData);
+	freeWaveData(outWavData);
 
 	freeWaveData(wavData);
 	return 0;
