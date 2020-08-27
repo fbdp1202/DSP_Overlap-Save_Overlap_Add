@@ -1,11 +1,13 @@
 // reference https://stackoverrun.com/ko/q/3685205
-#ifndef WAV_HEADER_H
-#define WAV_HEADER_H
+#ifndef WAV_CONTROLLER_H
+#define WAV_CONTROLLER_H
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
 #include <fstream>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 typedef struct  WAV_HEADER
 {
@@ -25,19 +27,7 @@ typedef struct  WAV_HEADER
 	/* "data" sub-chunk */
 	uint8_t         Subchunk2ID[4]; // "data"  string
 	uint32_t        Subchunk2Size;  // Sampled data length
-} wav_hdr;
-
-typedef struct WAV_BUFFER
-{
-	uint32_t 		length;
-	uint8_t*		buffer;
-} wav_buf;
-
-typedef struct WAV_DATA
-{
-	wav_hdr*		wavHeader;
-	wav_buf*		wavBuffer;
-} wav_data;
+} wavHdr;
 
 typedef struct SAMPLE_BUFFER
 {
@@ -45,16 +35,21 @@ typedef struct SAMPLE_BUFFER
 	int16_t*		buffer;
 } sample_16b_buf;
 
-int getFileSize(FILE* inFile);
+class wavController
+{
+	FILE* wavFile;
+	wavHdr* wavHeader;
+public:
+	wavController();
+	wavController(std::string fileName);
+	wavController(wavController* target);
+	~wavController();
+	void printWavHeader(void);
+	uint16_t getBitsPerSample();
+	FILE* getFilePtr();
+	void setDataLength(int length);
+	wavHdr* getWavHeader();
+	void writeWavFile(std::string outFileName, wavHdr* wavHeader, uint8_t* wavBuf, int length);
+};
 
-wav_data readWaveData(char *fname);
-wav_data setWaveHeader(wav_data wavData);
-void writeWaveData(char *outFileName, wav_data wavData);
-void freeWaveData(wav_data wavData);
-sample_16b_buf getSampleData(wav_data wavData);
-void freeSampleData(sample_16b_buf sample_buf);
-
-sample_16b_buf makeOutSampleData(sample_16b_buf inSampleData, uint32_t blockSize, uint32_t pad);
-wav_data makeOutWavData(wav_data inWavData, sample_16b_buf OutSampleData);
-
-#endif // WAV_HEADER_H
+#endif // WAV_CONTROLLER_H

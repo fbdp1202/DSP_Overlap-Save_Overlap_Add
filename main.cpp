@@ -11,35 +11,26 @@
 #include <stdlib.h>
 #include <iostream>
 #include <typeinfo.h>
+#include <string>
 
-#include "WaveHeader.h"
 #include "block_conv.h"
 
 int main(int argc, char ** argv)
 {
-	char fileName[] = "sa1.wav";
-	wav_data wavData = readWaveData(fileName);
+	std::string fileName = "sa1.wav";
 
-	char outFileNameSaveFFT[] = "sa1_overlap_save_fft.wav";
-	wav_data outWavData = do_overlap_save(wavData, 0);
-	writeWaveData(outFileNameSaveFFT, outWavData);
-	freeWaveData(outWavData);
+	const int N = 1024;
+	const int M = 512;
 
-	char outFileNameSaveDFT[] = "sa1_overlap_save_dft.wav";
-	outWavData = do_overlap_save(wavData, 1);
-	writeWaveData(outFileNameSaveDFT, outWavData);
-	freeWaveData(outWavData);
+	Block_conv* tests[4];
+	std::string strOverlapAdd = "overlap_add";
+	std::string strOverlapSave = "overlap_save";
+	std::string strFFT = "fft";
+	std::string stdDFT = "dft";
 
-	char outFileNameAddFFT[] = "sa1_overlap_add_fft.wav";
-	outWavData = do_overlap_add(wavData, 0);
-	writeWaveData(outFileNameAddFFT, outWavData);
-	freeWaveData(outWavData);
-
-	char outFileNameAddDFT[] = "sa1_overlap_add_dft.wav";
-	outWavData = do_overlap_add(wavData, 1);
-	writeWaveData(outFileNameAddDFT, outWavData);
-	freeWaveData(outWavData);
-
-	freeWaveData(wavData);
+	tests[0] = new Block_conv(fileName, strOverlapAdd, strFFT, N, M);
+	tests[1] = new Block_conv(fileName, strOverlapAdd, stdDFT, N, M);
+	tests[2] = new Block_conv(fileName, strOverlapSave, strFFT, N, M);
+	tests[3] = new Block_conv(fileName, strOverlapSave, stdDFT, N, M);
 	return 0;
 }
