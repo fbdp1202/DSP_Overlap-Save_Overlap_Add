@@ -116,7 +116,9 @@ tests[3] = new Block_conv(fileName, strOverlapSave, stdDFT, N, M);
 
 # LICENSE
 
-[MIT](LICENSE.md)
+[BSD-3-Clause](LICENSES/BSD-3-Clause)
+[MIT](LICENSES/LICENSE.md)
+[Unlicense](LICENSES/Unlicense)
 
 # Reference
 
