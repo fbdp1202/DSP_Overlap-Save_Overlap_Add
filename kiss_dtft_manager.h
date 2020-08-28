@@ -14,8 +14,8 @@ class dtftManger
     kiss_dft_state* dt;
     kiss_dft_state* dti;
 
-	int nfft;
-	std::string mode;
+    int nfft;
+    std::string mode;
 
 public:
     dtftManger();

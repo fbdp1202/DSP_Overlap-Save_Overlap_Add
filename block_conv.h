@@ -22,18 +22,18 @@ class Block_conv
     wavController* inWav;
     wavController* outWav;
 
-	dtftManger* transformer;
+    dtftManger* transformer;
 
-	Sampler* inSampler;
-	Sampler* outSampler;
+    Sampler* inSampler;
+    Sampler* outSampler;
 
     std::string method;
-	std::string mode;
-	std::string inFileName;
-	std::string outFileName;
+    std::string mode;
+    std::string inFileName;
+    std::string outFileName;
 
-	std::function<void(kiss_fft_cpx*, int, int)> inFcnPtr;
-	std::function<void(kiss_fft_cpx*, int)> outFcnPtr;
+    std::function<void(kiss_fft_cpx*, int, int)> inFcnPtr;
+    std::function<void(kiss_fft_cpx*, int)> outFcnPtr;
 
     kiss_fft_cpx* h_FltBuf;
     kiss_fft_cpx* H_FltBuf;
@@ -45,33 +45,33 @@ class Block_conv
     kiss_fft_cpx* Y_WavBuf;
 
 public:
-	Block_conv();
+    Block_conv();
     Block_conv(std::string fileName, std::string method, std::string mode, int N, int M);
-	~Block_conv();
+    ~Block_conv();
 
-	void runOverlapMethod();
-	void overlapAddInput(kiss_fft_cpx* inBuf, int start, int length);
-	void overlapAddOutput(kiss_fft_cpx* inBuf, int start);
+    void runOverlapMethod();
+    void overlapAddInput(kiss_fft_cpx* inBuf, int start, int length);
+    void overlapAddOutput(kiss_fft_cpx* inBuf, int start);
 
-	void overlapSaveInput(kiss_fft_cpx* inBuf, int start, int length);
-	void overlapSaveOutput(kiss_fft_cpx* inBuf, int start);
-	
-	void writeOutWav(std::string outFileName);
-	void writeWav(std::string outFileName, wavHdr* wavHeader, uint8_t* wavBuf, int length);
+    void overlapSaveInput(kiss_fft_cpx* inBuf, int start, int length);
+    void overlapSaveOutput(kiss_fft_cpx* inBuf, int start);
 
-	std::string getOutFileName(std::string inFileName, std::string method, std::string mode);
-	void cpxMultiply(kiss_fft_cpx* A, kiss_fft_cpx* B, kiss_fft_cpx* C, int length);
+    void writeOutWav(std::string outFileName);
+    void writeWav(std::string outFileName, wavHdr* wavHeader, uint8_t* wavBuf, int length);
 
-	void initMethod(std::string method);
-	void initFilter();
-	void initSampler();
-	void initInputs();
+    std::string getOutFileName(std::string inFileName, std::string method, std::string mode);
+    void cpxMultiply(kiss_fft_cpx* A, kiss_fft_cpx* B, kiss_fft_cpx* C, int length);
 
-	void delWav();
-	void delTransformer();
-	void delFilter();
-	void delSampler();
-	void delInputs();
+    void initMethod(std::string method);
+    void initFilter();
+    void initSampler();
+    void initInputs();
+
+    void delWav();
+    void delTransformer();
+    void delFilter();
+    void delSampler();
+    void delInputs();
 };
 
 #endif // !BLOCK_CONV_H

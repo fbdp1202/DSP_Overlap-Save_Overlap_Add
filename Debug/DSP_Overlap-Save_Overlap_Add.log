@@ -1,0 +1,29 @@
+﻿  block_conv.cpp
+c:\workspace_yc\dsp_overlap-save_overlap_add\lpf_hamming_512.h(6): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+  kiss_dft.cpp
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_dft.cpp(36): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_dft.cpp(37): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  kiss_dtft_manager.cpp
+  main.cpp
+  sampler.cpp
+c:\workspace_yc\dsp_overlap-save_overlap_add\sampler.cpp(35): warning C4018: '>=': signed 또는 unsigned가 일치하지 않습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\sampler.cpp(41): warning C4018: '>=': signed 또는 unsigned가 일치하지 않습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\sampler.cpp(55): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  util.cpp
+  wavController.cpp
+  코드를 생성하고 있습니다...
+  kfc.c
+  kiss_fastfir.c
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fastfir.c(159): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  kiss_fft.c
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fft.c(119): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fft.c(120): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  kiss_fftnd.c
+  kiss_fftndr.c
+  kiss_fftr.c
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fftr.c(116): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fftr.c(117): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fftr.c(118): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\workspace_yc\dsp_overlap-save_overlap_add\kiss_fftr.c(119): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  DSP_Overlap-Save_Overlap_Add.vcxproj -> C:\workspace_yc\DSP_Overlap-Save_Overlap_Add\Debug\DSP_Overlap-Save_Overlap_Add.exe
