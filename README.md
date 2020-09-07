@@ -1,9 +1,9 @@
 # Implementation DFT and overlap Method(overlapadd & overlap-save)
 
-- This project just deals with **DFT** and **Block Convoltuion** using **Two Overlap Methods** in DSP 
+- This project just deals with **DFT** and **Block Convoltuion** using **Two Overlap Methods** in DSP
 - Implement using **C++11**
 - FFT uses the [**kiss_fft**](https://github.com/mborgerding/kissfft) library
-- Use Low-pass Filter 
+- Use Low-pass Filter
 - it was tested on the **Window 10**, **Visual Studio 15**
 
 
@@ -12,6 +12,8 @@
 
 
 ## How to use
+
+---
 
 ### Simple Test
 
@@ -25,9 +27,30 @@ git clone https://github.com/fbdp1202/DSP_Overlap-Save_Overlap_Add.git
 
 2. Open Visual Studio Project **"DSP_Overlap-Save_Overlap_Add.sln"**
 
-   
+
 
 3. Just Build and Run
+
+---
+
+### Result
+
+1. Read and Write wav file
+
+
+![](img/read_and_write_wav_file.jpg)
+
+2. WAV spectrogram
+
+- Spectrogram of Original WAV
+![](img/original_wav.jpg)
+
+- Spectrogram of Filtered WAV
+![](img/filtered_wav.jpg)
+
+
+
+---
 
 ### Optional mode
 
@@ -52,7 +75,7 @@ tests[3] = new Block_conv(fileName, strOverlapSave, stdDFT, N, M);
 
 - **fileName** : Choose Wav File (only **Single Channel** and **16bit Sample Length**)
 
-- **N** : number of DFT 
+- **N** : number of DFT
 
 - **M** : length of Low-Filter
 
